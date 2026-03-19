@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require('../models/User');
 
 // ROTA: Criar um novo usuário
-router.post('/', async (req, res) => {
+/* router.post('/', async (req, res) => {
   try {
     const user = await User.create(req.body);
     res.status(201).json(user);
@@ -61,6 +61,6 @@ router.delete('/:id', async (req, res) => {
   } catch (error) {
     res.status(500).json({ erro: error.message });
   }
-});
+}); */
 
 module.exports = router;
