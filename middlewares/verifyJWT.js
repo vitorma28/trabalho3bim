@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 
 function verifyJWT(req, res, next) {
@@ -14,7 +15,7 @@ function verifyJWT(req, res, next) {
 
     try {
         // 3. Verifica o token usando sua chave secreta
-        const secret = process.env.JWT_SECRET || 'sua_chave_secreta_aqui';
+        const secret = process.env.JWTSECRET;
         const decoded = jwt.verify(token, secret);
 
         // 4. Adiciona os dados do payload ao objeto request
