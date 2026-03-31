@@ -3,7 +3,7 @@ const sequelize = require('../config/database');
 
 //perfil
 //não colocamos usuarioId aqui porque o Sequelize cria automaticamente pela associaçao
-const Perfil = sequelize.define('Perfil', {
+const Profile = sequelize.define('Profile', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -17,4 +17,4 @@ const Perfil = sequelize.define('Perfil', {
   }
 });
 
-module.exports = Perfil;
+module.exports = Profile;

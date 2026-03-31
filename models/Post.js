@@ -18,4 +18,4 @@ const Post = sequelize.define('Post', {
   }
 });
 
-module.exports = Comentario;
+module.exports = Post;
