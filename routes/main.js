@@ -51,7 +51,7 @@ async function loginById(req, res) {
     const { id, senha } = req.body;
 
     // Busco o usuário pelo id
-    const user = User.findByPk(id);
+    const user = await User.findByPk(id);
 
     // Verifico se não existe
     if (!user) {
@@ -80,10 +80,55 @@ async function loginById(req, res) {
     return token;
 }
 
+async function loginByEmail(req, res) {
+    // Obtenho email e senha
+    const { email, senha } = req.body;
+
+    try {
+        // Busco o usuário pelo email
+        const user = await User.findOne({ where: { email } });
+
+        // Verifico se não existe
+        if (!user) {
+            return res.status(404).json({
+                message: `Usuário com o email ${email} não existe.`
+            });
+        }
+
+        // Verifico se a senha está errada
+        if (user.senha != senha) {
+            return res.status(401).json({
+                message: `Senha incorreta.`
+            });
+        }
+
+        // Crio o payload
+        const payload = {
+            userId: user.id
+        };
+
+        // Gero o token
+        const token = jwt.sign(payload, SECRET, {
+            expiresIn: '1h'
+        });
+
+        // Retorno o token
+        return res.status(200).json({
+            message: 'Login realizado com sucesso',
+            token
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Erro interno do servidor'
+        });
+    }
+}
+
 router.post('/login', loginById);
 
 router.post('/login/id', loginById);
 
-router.post('/login/email', async (req, res) => {});
+router.post('/login/email', loginByEmail);
 
 module.exports = router;
