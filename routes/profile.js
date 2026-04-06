@@ -1,17 +1,37 @@
 const express = require('express');
 const { verifyJWT } = require('../middlewares/verifyJWT.js');
+const Profile = require('../models/Profile.js');
+const User = require('../models/User.js');
+
 const router = express.Router();
 
 
-router.get('/', verifyJWT, (req, res) => {});
+router.get('/', verifyJWT, async (req, res) => {
+    const userId = req.user.userId;
 
-router.get('/:id', verifyJWT, (req, res) => {});
+    try {
+        const profiles = await Profile.findAll({
+            where: {
+                userId
+            }
+        });
+    
 
-router.post('/', verifyJWT, (req, res) => {});
+        return res.json(profiles);
+    }
+    catch (err) {
+        console.error('Erro ao buscar perfis:\n', err);
+        return res.status(500).json({ msg: "Erro ao buscar perfis"})
+    }
+});
 
-router.delete('/:id', verifyJWT, (req, res) => {});
+router.get('/:id', verifyJWT, async (req, res) => {});
 
-router.post('/:id', verifyJWT, (req, res) => {});
+router.post('/', verifyJWT, async (req, res) => {});
+
+router.delete('/:id', verifyJWT, async (req, res) => {});
+
+router.post('/:id', verifyJWT, async (req, res) => {});
 
 
 module.exports = router;

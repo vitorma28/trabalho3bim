@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
-const User = require('../models/User');
+const User = require('../models/User.js');
 
 require('dotenv').config();
 
@@ -15,69 +15,92 @@ router.post('/cadastro', async (req, res) => {
     // Obtemos informações
     const { id, email, senha } = req.body;
 
-    // Verificar se já existe um usuário assim
-    const usersId = await User.findAll({
-        where: {
-            id: id
-        }
-    });
+    try {
+        // Verificar se já existe um usuário assim
+        const usersId = await User.findAll({
+            where: {
+                id: id
+            }
+        });
 
-    if (usersId.length != 0) {
-        return res.status(409).json({
-            message: "Já existe um usuário com esse id."
+        if (usersId.length != 0) {
+            return res.status(409).json({
+                message: "Já existe um usuário com esse id."
+            });
+        }
+
+        const usersEmail = await User.findAll({
+            where: {
+                email: email
+            }
+        });
+
+        if (usersEmail.length != 0) {
+            return res.status(409).json({
+                message: "Já existe um usuário com esse email."
+            });
+        }
+
+
+        // Criar usuário
+
+        await User.create({ id, email, senha });
+
+        res.json({
+            message: `Usuário com id ${id}, email ${email} e senha ${senha} foi cadastrado.`
         });
     }
-
-    const usersEmail = await User.findAll({
-        where: {
-            email: email
-        }
-    });
-
-    if (usersEmail.length != 0) {
-        return res.status(409).json({
-            message: "Já existe um usuário com esse email."
-        });
+    catch (error) {
+        return res.status(500).json({
+            message: "Erro ao cadastrar usuário",
+            error: error
+        })
     }
-
-
-    // Criar usuário
-
-    await User.create({ id, email, senha });
 });
 
 async function loginById(req, res) {
     // Obtenho id e senha
     const { id, senha } = req.body;
 
-    // Busco o usuário pelo id
-    const user = await User.findByPk(id);
+    try {
+        // Busco o usuário pelo id
+        const user = await User.findByPk(id);
 
-    // Verifico se não existe
-    if (!user) {
-        return res.status(404).json({
-            message: `Usuário com o ID ${id} não existe.`
+        // Verifico se não existe
+        if (!user) {
+            return res.status(404).json({
+                message: `Usuário com o ID ${id} não existe.`
+            });
+        }
+
+        // Verifico se a senha está errada
+        if (user.senha != senha) {
+            return res.status(401).json({
+                message: `Senha incorreta.`
+            });
+        }
+
+        // Retorno o token
+
+        const payload = {
+            userId: id
+        };
+
+        const token = jwt.sign(payload, SECRET, {
+            expiresIn: '1h'
+        });
+
+        return res.json({
+            message: `Login bem-sucedido`,
+            token
         });
     }
-
-    // Verifico se a senha está errada
-    if (user.senha != senha) {
-        return res.status(401).json({
-            message: `Senha incorreta.`
+    catch (error) {
+        return res.status(500).json({
+            message: `Erro ao fazer login.`,
+            error
         });
     }
-
-    // Retorno o token
-
-    const payload = {
-        userId: id
-    };
-
-    const token = jwt.sign(payload, SECRET, {
-        expiresIn: '1h'
-    });
-
-    return token;
 }
 
 async function loginByEmail(req, res) {

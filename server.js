@@ -2,6 +2,7 @@ const models = './models/';
 const routes = './routes/';
 
 const express = require('express');
+const { DataTypes } = require('sequelize');
 const sequelize = require('./config/database');
 
 const userRoutes = require(routes + 'user.js');
