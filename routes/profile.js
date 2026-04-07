@@ -27,9 +27,22 @@ router.get('/', verifyJWT, async (req, res) => {
 
 router.get('/:id', verifyJWT, async (req, res) => {
     const userId = req.user.userId;
+    const profileId = req.params.id;
 
     try {
-        
+        const profile = await Profile.findOne({
+            where: {
+                id: profileId
+            }
+        });
+
+        if (profile.userId != userId) {
+            return res.status(404).json({
+                message: `Nenhum perfil de id ${profileId} foi encontrado no usuário ${userId}`
+            });
+        }
+
+        return res.json(profile);
     }
     catch (err) {
         console.error('Erro ao buscar perfis:\n', err);
