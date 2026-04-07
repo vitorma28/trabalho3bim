@@ -25,13 +25,47 @@ router.get('/', verifyJWT, async (req, res) => {
     }
 });
 
-router.get('/:id', verifyJWT, async (req, res) => {});
+router.get('/:id', verifyJWT, async (req, res) => {
+    const userId = req.user.userId;
 
-router.post('/', verifyJWT, async (req, res) => {});
+    try {
+        
+    }
+    catch (err) {
+        console.error('Erro ao buscar perfis:\n', err);
+        return res.status(500).json({ msg: "Erro ao buscar perfil"})
+    }
+});
 
-router.delete('/:id', verifyJWT, async (req, res) => {});
+router.post('/', verifyJWT, async (req, res) => {
+    const userId = req.user.userId;
 
-router.post('/:id', verifyJWT, async (req, res) => {});
+    try {}
+    catch (err) {
+        console.error('Erro ao buscar perfis:\n', err);
+        return res.status(500).json({ msg: "Erro ao criar perfil"})
+    }
+});
+
+router.delete('/:id', verifyJWT, async (req, res) => {
+    const userId = req.user.userId;
+
+    try {}
+    catch (err) {
+        console.error('Erro ao buscar perfis:\n', err);
+        return res.status(500).json({ msg: "Erro ao remover perfil"})
+    }
+});
+
+router.patch('/:id', verifyJWT, async (req, res) => {
+    const userId = req.user.userId;
+
+    try {}
+    catch (err) {
+        console.error('Erro ao buscar perfis:\n', err);
+        return res.status(500).json({ msg: "Erro ao atualizar perfis"})
+    }
+});
 
 
 module.exports = router;
