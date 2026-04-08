@@ -16,36 +16,36 @@ module.exports = {
         // 1 User - N Profiles
         // Nota: Como User.id é STRING, a foreignKey 'userId' em Profile será STRING.
         User.hasMany(Profile, { 
-        foreignKey: {
-            name: 'userId',
-            type: DataTypes.STRING, // Deve coincidir com User.id
-            allowNull: false
-        },
-        as: 'profiles' 
+            foreignKey: {
+                name: 'userId',
+                type: DataTypes.STRING, // Deve coincidir com User.id
+                allowNull: false
+            },
+            as: 'profiles' 
         });
         Profile.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
         // 1 Profile - N Posts
         // Nota: Profile.id é INTEGER, então a foreignKey 'profileId' será INTEGER.
         Profile.hasMany(Post, { 
-        foreignKey: {
-            name: 'profileId',
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        as: 'posts' 
+            foreignKey: {
+                name: 'profileId',
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
+            as: 'posts' 
         });
         Post.belongsTo(Profile, { foreignKey: 'profileId', as: 'profile' });
 
         // 1 Post - N Comments
         // Nota: Post.id é INTEGER, então a foreignKey 'postId' será INTEGER.
         Post.hasMany(Comment, { 
-        foreignKey: {
-            name: 'postId',
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        as: 'comments' 
+            foreignKey: {
+                name: 'postId',
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
+            as: 'comments' 
         });
         Comment.belongsTo(Post, { foreignKey: 'postId', as: 'post' });
     }

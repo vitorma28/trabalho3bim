@@ -12,8 +12,9 @@ const Profile = sequelize.define('Profile', {
   bio: {
     type: DataTypes.TEXT
   },
-  foto: {
-    type: DataTypes.STRING
+  nome: {
+    type: DataTypes.STRING,
+    nullable: false
   }
 });
 

@@ -52,8 +52,21 @@ router.get('/:id', verifyJWT, async (req, res) => {
 
 router.post('/', verifyJWT, async (req, res) => {
     const userId = req.user.userId;
+    const { nome, bio } = req.body;
 
-    try {}
+    if (!nome) {
+        res.status(400).json({
+            message: "Nome vazio. Por favor, coloque um nome."
+        });
+    }
+
+    try {
+        await Profile.create({ nome, bio, userId });
+
+        res.json({
+            message: "Perfil criado com sucesso."
+        })
+    }
     catch (err) {
         console.error('Erro ao buscar perfis:\n', err);
         return res.status(500).json({ msg: "Erro ao criar perfil"})
@@ -61,9 +74,25 @@ router.post('/', verifyJWT, async (req, res) => {
 });
 
 router.delete('/:id', verifyJWT, async (req, res) => {
-    const userId = req.user.userId;
+    const userId = req.user.userId; 
+    const profileId = req.params.id;
 
-    try {}
+    try {
+        const rowsDeleted = await Profile.destroy({
+            where: {
+                id: profileId,
+                userId: userId
+            }
+        });
+
+        if (rowsDeleted === 0) {
+            return res.status(404).json({
+                message: `Perfil não encontrado ou você não tem permissão para removê-lo.`
+            });
+        }
+        
+        res.json()
+    }
     catch (err) {
         console.error('Erro ao buscar perfis:\n', err);
         return res.status(500).json({ msg: "Erro ao remover perfil"})
