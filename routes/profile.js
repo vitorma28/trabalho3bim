@@ -101,8 +101,34 @@ router.delete('/:id', verifyJWT, async (req, res) => {
 
 router.patch('/:id', verifyJWT, async (req, res) => {
     const userId = req.user.userId;
+    const profileId = req.params.id;
 
-    try {}
+    const { bio, nome } = req.body;
+
+    try {
+        const profile = await Profile.findOne({
+            where: {
+                userId,
+                id: profileId
+            }
+        });
+
+        if (!profile) {
+            return res.status(404).json({
+                message: `Perfil ${profileId} não encontrado`
+            });
+        }
+
+        if (bio) profile.bio = bio;
+
+        if (nome) profile.nome = nome;
+
+        await profile.save();
+
+        return res.json({
+            message: `Perfil ${profileId} alterado com sucesso.`
+        });
+    }
     catch (err) {
         console.error('Erro ao buscar perfis:\n', err);
         return res.status(500).json({ msg: "Erro ao atualizar perfis"})
