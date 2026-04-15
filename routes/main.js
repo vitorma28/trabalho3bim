@@ -1,8 +1,7 @@
 const express = require('express');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { Op } = require('sequelize');
 const User = require('../models/User.js');
-
 require('dotenv').config();
 
 const SECRET = process.env.JWTSECRET;
@@ -13,9 +12,11 @@ router.post('/cadastro', async (req, res) => {
     // Cria um usuário com as infos.
 
     // Obtemos informações
-    const { id, email, senha } = req.body;
+    const { id, email, _senha } = req.body;
 
     try {
+        const senha = await bcrypt.hash(_senha, process.env.SALT_COST);
+
         // Verificar se já existe um usuário assim
         const usersId = await User.findAll({
             where: {
@@ -51,10 +52,10 @@ router.post('/cadastro', async (req, res) => {
         });
     }
     catch (error) {
+        console.error(error);
         return res.status(500).json({
-            message: "Erro ao cadastrar usuário",
-            error: error
-        })
+            message: "Erro ao cadastrar usuário"
+        });
     }
 });
 
@@ -74,7 +75,8 @@ async function loginById(req, res) {
         }
 
         // Verifico se a senha está errada
-        if (user.senha != senha) {
+        const senhaEquivalente = await bcrypt.compare(user.senha, senha);
+        if (!senhaEquivalente) {
             return res.status(401).json({
                 message: `Senha incorreta.`
             });
@@ -119,7 +121,8 @@ async function loginByEmail(req, res) {
         }
 
         // Verifico se a senha está errada
-        if (user.senha != senha) {
+        const senhaEquivalente = await bcrypt.compare(user.senha, senha);
+        if (!senhaEquivalente) {
             return res.status(401).json({
                 message: `Senha incorreta.`
             });
