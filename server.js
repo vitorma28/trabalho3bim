@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 
 // Usando as rotas de usuário
-app.use('/usuarios', userRoutes);
+app.use('/usuario', userRoutes);
 app.use('/profile', profileRoutes);
 app.use('/', mainRoutes);
 

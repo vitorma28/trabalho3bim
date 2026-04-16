@@ -8,8 +8,10 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const users = User.findAll({
-            include: [ 'id' ]
+        const users = await User.findAll({
+            attributes: [
+                'id'
+            ]
         });
 
         return res.json(users);
@@ -26,7 +28,9 @@ router.get('/:id', async (req, res) => {
     const id = req.params.id;
 
     try {
-        const user = await User.findByPk(id);
+        const user = await User.findByPk(id, {
+            attributes: [ 'id', 'email' ]
+        });
 
         if (!user) {
             return res.status(404).json({
@@ -45,7 +49,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.patch('/', verifyJWT, async (req, res) => {
-    const id = req.user.id;
+    const id = req.user.userId;
     const { email, senha } = req.body;
     
     try {
@@ -78,7 +82,7 @@ router.patch('/', verifyJWT, async (req, res) => {
 });
 
 router.delete('/', verifyJWT, async (req, res) => {
-    const id = req.user.id;
+    const id = req.user.userId;
 
     try {
         const deletedUser = User.destroy({

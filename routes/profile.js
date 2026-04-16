@@ -12,7 +12,8 @@ router.get('/', verifyJWT, async (req, res) => {
         const profiles = await Profile.findAll({
             where: {
                 userId
-            }
+            },
+            attributes: [ 'id', 'nome', 'bio' ]
         });
     
 
@@ -33,7 +34,8 @@ router.get('/:id', verifyJWT, async (req, res) => {
             where: {
                 id: profileId,
                 userId
-            }
+            },
+            attributes: [ 'id', 'nome', 'bio' ]
         });
 
         if (!profile) {
@@ -87,11 +89,13 @@ router.delete('/:id', verifyJWT, async (req, res) => {
 
         if (rowsDeleted === 0) {
             return res.status(404).json({
-                message: `Perfil não encontrado ou você não tem permissão para removê-lo.`
+                message: `Perfil não encontrado.`
             });
         }
         
-        return res.json()
+        return res.json({
+            message: `Perfil ${profileId} foi removido com sucesso`
+        })
     }
     catch (err) {
         console.error('Erro ao buscar perfis:\n', err);

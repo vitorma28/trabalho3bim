@@ -12,10 +12,10 @@ router.post('/cadastro', async (req, res) => {
     // Cria um usuário com as infos.
 
     // Obtemos informações
-    const { id, email, _senha } = req.body;
+    const { id, email, senha: _senha } = req.body;
 
     try {
-        const senha = await bcrypt.hash(_senha, process.env.SALT_COST);
+        const senha = await bcrypt.hash(_senha, parseInt(process.env.SALT_COST));
 
         // Verificar se já existe um usuário assim
         const usersId = await User.findAll({
@@ -48,7 +48,7 @@ router.post('/cadastro', async (req, res) => {
         await User.create({ id, email, senha });
 
         res.json({
-            message: `Usuário com id ${id}, email ${email} e senha ${senha} foi cadastrado.`
+            message: `Usuário com id ${id}, email ${email} e senha ${_senha} foi cadastrado.`
         });
     }
     catch (error) {
@@ -75,7 +75,7 @@ async function loginById(req, res) {
         }
 
         // Verifico se a senha está errada
-        const senhaEquivalente = await bcrypt.compare(user.senha, senha);
+        const senhaEquivalente = await bcrypt.compare(senha, user.senha);
         if (!senhaEquivalente) {
             return res.status(401).json({
                 message: `Senha incorreta.`
@@ -121,7 +121,7 @@ async function loginByEmail(req, res) {
         }
 
         // Verifico se a senha está errada
-        const senhaEquivalente = await bcrypt.compare(user.senha, senha);
+        const senhaEquivalente = await bcrypt.compare(senha, user.senha);
         if (!senhaEquivalente) {
             return res.status(401).json({
                 message: `Senha incorreta.`
