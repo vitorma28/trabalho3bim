@@ -1,7 +1,6 @@
 const express = require('express');
 const { verifyJWT } = require('../middlewares/verifyJWT.js');
 const Profile = require('../models/Profile.js');
-const User = require('../models/User.js');
 
 const router = express.Router();
 
@@ -32,11 +31,12 @@ router.get('/:id', verifyJWT, async (req, res) => {
     try {
         const profile = await Profile.findOne({
             where: {
-                id: profileId
+                id: profileId,
+                userId
             }
         });
 
-        if (profile.userId != userId) {
+        if (!profile) {
             return res.status(404).json({
                 message: `Nenhum perfil de id ${profileId} foi encontrado no usuário ${userId}`
             });
@@ -55,7 +55,7 @@ router.post('/', verifyJWT, async (req, res) => {
     const { nome, bio } = req.body;
 
     if (!nome) {
-        res.status(400).json({
+        return res.status(400).json({
             message: "Nome vazio. Por favor, coloque um nome."
         });
     }
@@ -63,7 +63,7 @@ router.post('/', verifyJWT, async (req, res) => {
     try {
         await Profile.create({ nome, bio, userId });
 
-        res.json({
+        return res.json({
             message: "Perfil criado com sucesso."
         })
     }
@@ -91,7 +91,7 @@ router.delete('/:id', verifyJWT, async (req, res) => {
             });
         }
         
-        res.json()
+        return res.json()
     }
     catch (err) {
         console.error('Erro ao buscar perfis:\n', err);

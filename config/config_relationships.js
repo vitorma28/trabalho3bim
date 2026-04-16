@@ -1,4 +1,4 @@
-const models = './models/';
+const models = '../models/';
 const { DataTypes } = require('sequelize');
 
 const Profile = require(models + 'Profile.js');
